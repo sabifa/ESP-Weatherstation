@@ -14,7 +14,7 @@ export default defineComponent({
 
 <style lang="scss">
 #app {
-  font-family: "Quicksand", Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Quicksand', Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
