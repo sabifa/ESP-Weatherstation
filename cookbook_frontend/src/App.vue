@@ -1,5 +1,14 @@
 <template>
   <div id="app">
+    <div class="nav">
+      <router-link to="/">
+        Home
+      </router-link>
+      |
+      <router-link to="/login">
+        Login
+      </router-link>
+    </div>
     <router-view />
   </div>
 </template>
@@ -20,5 +29,14 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+a {
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.router-link-exact-active {
+  color: #00a1ff;
 }
 </style>
