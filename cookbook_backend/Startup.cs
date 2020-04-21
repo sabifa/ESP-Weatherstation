@@ -43,6 +43,8 @@ namespace Cookbook
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ITokenService, TokenService>();
 
+            services.AddCors();
+
             services.AddMvc(options =>
                 {
                     options.EnableEndpointRouting = false;
@@ -124,6 +126,10 @@ namespace Cookbook
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
             app.UseMvc();
         }
