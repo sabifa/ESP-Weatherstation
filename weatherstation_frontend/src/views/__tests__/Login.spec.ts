@@ -3,6 +3,7 @@ import router from '@/router';
 import api from '@/services/api';
 import { LoginResponse } from '@/services/api/login';
 import { when } from 'jest-when';
+import toastService from '@/services/toastService/toastService';
 import Login from '../Login.vue';
 
 describe('Login', () => {
@@ -13,6 +14,8 @@ describe('Login', () => {
 
   beforeEach(() => {
     jest.spyOn(router, 'push').mockImplementation(() => {});
+    jest.spyOn(toastService, 'showError').mockImplementation(() => {});
+    jest.spyOn(toastService, 'showSuccess').mockImplementation(() => {});
 
     const login = jest.spyOn(api, 'login');
     when(login)
@@ -34,6 +37,7 @@ describe('Login', () => {
     await vm.$nextTick();
 
     expect(router.push).toBeCalledWith('/');
+    expect(toastService.showSuccess).toBeCalledWith('login succeeded');
   });
 
   it('does not redirect login failed', async () => {
@@ -45,5 +49,6 @@ describe('Login', () => {
     await vm.$nextTick();
 
     expect(router.push).not.toBeCalledWith('/');
+    expect(toastService.showError).toBeCalledWith('login failed');
   });
 });

@@ -21,14 +21,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, getCurrentInstance } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import router from '../router';
 import api from '../services/api';
+import toastService from '../services/toastService/toastService';
 
 export default defineComponent({
   name: 'Login',
   setup() {
-    const vm = getCurrentInstance();
     const email = ref('');
     const password = ref('');
 
@@ -36,9 +36,9 @@ export default defineComponent({
       try {
         await api.login({ email: email.value, password: password.value });
         router.push('/');
+        toastService.showSuccess('login succeeded');
       } catch (error) {
-        // eslint-disable-next-line no-unused-expressions
-        vm?.$toast.error('login failed');
+        toastService.showError('login failed');
       }
     };
 
