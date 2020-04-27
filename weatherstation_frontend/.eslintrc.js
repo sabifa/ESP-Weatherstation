@@ -18,6 +18,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     'import/prefer-default-export': 'off',
     "@typescript-eslint/explicit-function-return-type": ["warn"],
+    'implicit-arrow-linebreak': 'off'
   },
   overrides: [
     {
