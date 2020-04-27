@@ -4,5 +4,5 @@
   "semi": true,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "printWidth": 100
+  "printWidth": 75
 }
