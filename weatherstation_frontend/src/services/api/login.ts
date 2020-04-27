@@ -1,4 +1,4 @@
-import httpClient from '../httpClient';
+import httpClient from '../httpClient/httpClient';
 
 export type LoginRequest = {
   email: string;
@@ -11,12 +11,8 @@ export type LoginResponse = {
 }
 
 const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
-  // TODO: Maybe müssen wir hier gar nicht catchen?
-  try {
-    return httpClient.post('/identity/login', loginRequest);
-  } catch (error) {
-    throw new Error(error);
-  }
+  const x = '';
+  return httpClient.post('/identity/login', loginRequest);
 };
 
 export default login;

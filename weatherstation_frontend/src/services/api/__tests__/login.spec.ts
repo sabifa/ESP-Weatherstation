@@ -1,8 +1,8 @@
-import httpClient from '@/services/httpClient';
+import httpClient from '@/services/httpClient/httpClient';
 import api from '..';
 import { LoginRequest, LoginResponse } from '../login';
 
-describe.skip('login', () => {
+describe('login', () => {
   const request: LoginRequest = {
     email: 'test@gmail.com',
     password: 'password123!',
