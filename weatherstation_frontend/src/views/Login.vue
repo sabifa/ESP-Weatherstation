@@ -22,13 +22,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
+import { useToast } from 'vue-toastification/composition';
 import router from '../router';
 import api from '../services/api';
-import toastService from '../services/toastService/toastService';
 
 export default defineComponent({
   name: 'Login',
   setup() {
+    const toast = useToast();
     const email = ref('');
     const password = ref('');
 
@@ -36,9 +37,9 @@ export default defineComponent({
       try {
         await api.login({ email: email.value, password: password.value });
         router.push('/');
-        toastService.showSuccess('login succeeded');
+        toast.success('login succeeded');
       } catch (error) {
-        toastService.showError('login failed');
+        toast.error('login failed');
       }
     };
 

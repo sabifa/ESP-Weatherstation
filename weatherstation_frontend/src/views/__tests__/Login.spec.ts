@@ -6,6 +6,20 @@ import { when } from 'jest-when';
 import toastService from '@/services/toastService/toastService';
 import Login from '../Login.vue';
 
+// TODO: Extract this to test_utils, currently not working
+const mockSuccess = jest.fn();
+const mockError = jest.fn();
+
+jest.mock('vue-toastification/composition', () => ({
+  useToast() {
+    return {
+      success: mockSuccess,
+      error: mockError,
+    };
+  },
+}));
+// const mockToast = useMockToastification();
+
 describe('Login', () => {
   const loginResponse: LoginResponse = {
     accessToken: '1234',
@@ -37,7 +51,7 @@ describe('Login', () => {
     await vm.$nextTick();
 
     expect(router.push).toBeCalledWith('/');
-    expect(toastService.showSuccess).toBeCalledWith('login succeeded');
+    expect(mockSuccess).toBeCalledWith('login succeeded');
   });
 
   it('does not redirect login failed', async () => {
@@ -49,6 +63,6 @@ describe('Login', () => {
     await vm.$nextTick();
 
     expect(router.push).not.toBeCalledWith('/');
-    expect(toastService.showError).toBeCalledWith('login failed');
+    expect(mockError).toBeCalledWith('login failed');
   });
 });

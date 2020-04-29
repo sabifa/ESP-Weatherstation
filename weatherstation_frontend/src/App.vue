@@ -15,9 +15,14 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
+import 'vue-toastification/dist/index.css';
+import { provideToast } from 'vue-toastification/composition';
 
 export default defineComponent({
   name: 'App',
+  setup() {
+    provideToast({ pauseOnFocusLoss: false, pauseOnHover: false });
+  },
 });
 </script>
 
