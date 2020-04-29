@@ -16,7 +16,7 @@ const routes: Array<RouteConfig> = [
     path: '/login',
     name: 'Login',
     component: (): any =>
-      import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+      import(/* webpackChunkName: "LoginPage" */ '../views/LoginPage.vue'),
     meta: {
       isPublic: true,
     },
