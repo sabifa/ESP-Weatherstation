@@ -4,8 +4,8 @@ import api from '..';
 import { LoginRequest, LoginResponse } from '../loginOrRegister';
 import { when } from 'jest-when';
 
-describe('login', () => {
-  const request: LoginRequest = {
+describe('register', () => {
+  const registerRequest: LoginRequest = {
     email: 'test@gmail.com',
     password: 'password123!',
   };
@@ -30,14 +30,14 @@ describe('login', () => {
         .mockReturnValue(Promise.resolve(expected));
     });
 
-    it('returns LoginResponse when request succeeded', async () => {
-      const response = await api.login(request);
+    it('returns LoginResponse when register succeeded', async () => {
+      const response = await api.register(registerRequest);
 
       expect(response).toEqual(expected);
     });
 
     it('stores token', async () => {
-      await api.login(request);
+      await api.register(registerRequest);
 
       expect(tokenService.storeToken).toBeCalledWith(
         expected.accessToken,
@@ -46,14 +46,20 @@ describe('login', () => {
     });
   });
 
-  it('throws if api throws', async () => {
-    when(jest.spyOn(httpClient, 'post'))
-      .calledWith('/identity/login', request)
-      .mockImplementation(() => {
-        throw new Error('error');
-      });
+  describe('fails', () => {
+    beforeEach(() => {
+      when(jest.spyOn(httpClient, 'post'))
+        .calledWith('/identity/register', registerRequest)
+        .mockImplementation(() => {
+          throw new Error('error');
+        });
+    });
 
-    await expect(api.login(request)).rejects.toThrowError('error');
-    expect(tokenService.storeToken).not.toBeCalled();
+    it('throws if api throws', async () => {
+      await expect(api.register(registerRequest)).rejects.toThrowError(
+        'error',
+      );
+      expect(tokenService.storeToken).not.toBeCalled();
+    });
   });
 });

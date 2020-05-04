@@ -1,7 +1,7 @@
 import { render } from '@/utils/test_utils';
 import router from '@/router';
 import api from '@/services/api';
-import { LoginResponse } from '@/services/api/login';
+import { LoginResponse } from '@/services/api/loginOrRegister';
 import { when } from 'jest-when';
 import { Wrapper } from '@vue/test-utils';
 import Login from '../LoginPage.vue';

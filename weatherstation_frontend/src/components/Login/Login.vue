@@ -48,7 +48,8 @@ export default defineComponent({
     const email = ref('');
     const password = ref('');
 
-    const toastActionText = computed(() => (props.register ? 'register' : 'login'));
+    const toastActionText = computed(() =>
+      (props.register ? 'register' : 'login'));
 
     const handleSubmit = async (): Promise<void> => {
       try {
