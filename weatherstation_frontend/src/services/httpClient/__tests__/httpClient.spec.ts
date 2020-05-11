@@ -159,10 +159,15 @@ describe('httpClient', () => {
       jest.spyOn(tokenService, 'isExpired').mockReturnValue(true);
       accessTokenLocal = () => 'token';
       refreshTokenLocal = () => 'refreshToken';
-      const response = {
+      const failResponse = {
         status: 400,
         statusText: 'error',
         ok: false,
+        json: () => Promise.resolve({}),
+      } as Response;
+      const successResponse = {
+        status: 200,
+        ok: true,
         json: () => Promise.resolve({}),
       } as Response;
 
@@ -179,15 +184,14 @@ describe('httpClient', () => {
       //     }),
       //   })
       //   .mockReturnValue(Promise.resolve(response));
-      fetchMockFail();
+      fakeFetch = fakeFetchMock.mockReturnValueOnce(
+        Promise.resolve(failResponse),
+      ).mockReturnValueOnce(Promise.resolve(successResponse));
 
-      try {
-        await httpClient.get('/test');
-      } catch (error) {
-        
-      }
+      await httpClient.get('/test');
+
       expect(tokenService.clearToken).toBeCalled();
-      expect(router.push).toBeCalledWith('/login2');
+      expect(router.push).toBeCalledWith('/login');
     });
   });
 });

@@ -1,28 +1,38 @@
 import tokenService from '../tokenService/tokenService';
-import { LoginRequest, LoginResponse } from '../api/loginOrRegister';
+import { LoginResponse } from '../api/loginOrRegister';
 import router from '@/router';
 
-export const baseUrl = process.env.VUE_APP_ENV === 'production'
-  ? ''
-  : 'https://localhost:5001/api';
+export const baseUrl =
+  process.env.VUE_APP_ENV === 'production'
+    ? ''
+    : 'https://localhost:5001/api';
 
 enum HttpMethod {
   POST = 'POST',
   GET = 'GET',
 }
 
+const logoutAndRedirect = () => {
+  tokenService.clearToken();
+  router.push('/login');
+};
+
 const refreshToken = async (accessToken: string): Promise<void> => {
   try {
-    const result = await send<LoginResponse>('/identity/refresh', HttpMethod.POST, {
-      'accessToken': accessToken,
-      'refreshToken': tokenService.getRefreshToken(),
-    }, false);
+    const result = await send<LoginResponse>(
+      '/identity/refresh',
+      HttpMethod.POST,
+      {
+        accessToken: accessToken,
+        refreshToken: tokenService.getRefreshToken(),
+      },
+      false,
+    );
     tokenService.storeToken(result.accessToken, result.refreshToken);
   } catch (error) {
-    tokenService.clearToken();
-    router.push('/login');
+    logoutAndRedirect();
   }
-}
+};
 
 const send = async <T>(
   url: string,
@@ -39,8 +49,7 @@ const send = async <T>(
         await refreshToken(accessToken);
       }
     } else {
-      tokenService.clearToken();
-      router.push('/login');
+      logoutAndRedirect();
     }
   }
 
