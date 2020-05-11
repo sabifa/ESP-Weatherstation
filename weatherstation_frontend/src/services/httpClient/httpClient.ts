@@ -1,4 +1,6 @@
 import tokenService from '../tokenService/tokenService';
+import { LoginRequest, LoginResponse } from '../api/loginOrRegister';
+import router from '@/router';
 
 export const baseUrl = process.env.VUE_APP_ENV === 'production'
   ? ''
@@ -9,12 +11,39 @@ enum HttpMethod {
   GET = 'GET',
 }
 
+const refreshToken = async (accessToken: string): Promise<void> => {
+  try {
+    const result = await send<LoginResponse>('/identity/refresh', HttpMethod.POST, {
+      'accessToken': accessToken,
+      'refreshToken': tokenService.getRefreshToken(),
+    }, false);
+    tokenService.storeToken(result.accessToken, result.refreshToken);
+  } catch (error) {
+    tokenService.clearToken();
+    router.push('/login');
+  }
+}
+
 const send = async <T>(
   url: string,
   method: HttpMethod,
   payload: Record<string, unknown> | null,
   sendAuth: boolean,
 ): Promise<T> => {
+  if (sendAuth) {
+    const accessToken = tokenService.getAccessToken();
+    if (accessToken !== null) {
+      const expired = tokenService.isExpired(accessToken);
+
+      if (expired) {
+        await refreshToken(accessToken);
+      }
+    } else {
+      tokenService.clearToken();
+      router.push('/login');
+    }
+  }
+
   const headers: Record<string, string> = {
     Accept: 'application/json',
     'Content-Type': 'application/json',

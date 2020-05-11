@@ -14,6 +14,12 @@ const tokenService = {
   getRefreshToken(): string | null {
     return localStorage.getItem(tokenServiceConstants.refreshToken);
   },
+  isExpired(accessToken: string): boolean {
+    return true;
+  },
+  clearToken(): void {
+    
+  }
 };
 
 export default tokenService;
