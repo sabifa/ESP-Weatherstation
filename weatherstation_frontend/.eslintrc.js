@@ -14,24 +14,13 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'indent': ['warn', 2],
+    indent: ['warn', 2],
     'no-unused-vars': 'warn',
     'import/prefer-default-export': 'off',
-    "@typescript-eslint/explicit-function-return-type": ["warn"],
+    '@typescript-eslint/explicit-function-return-type': ['warn'],
     'implicit-arrow-linebreak': 'off',
-    'import/order': 'warn'
+    'import/order': 'warn',
   },
-  overrides: [
-    {
-      files: [
-        '**/__tests__/*.{j,t}s?(x)',
-        '**/tests/unit/**/*.spec.{j,t}s?(x)',
-      ],
-      env: {
-        jest: true,
-      },
-    },
-  ],
   overrides: [
     {
       files: [
