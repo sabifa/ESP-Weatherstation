@@ -11,6 +11,9 @@ describe('tokenService', () => {
       jest
         .spyOn(Storage.prototype, 'setItem')
         .mockImplementation(() => {});
+      jest
+        .spyOn(Storage.prototype, 'removeItem')
+        .mockImplementation(() => {});
     });
 
     it('stores token to localStorage', () => {
@@ -41,6 +44,41 @@ describe('tokenService', () => {
     it('returns stored tokens', () => {
       expect(tokenService.getAccessToken()).toBe('my-access-token');
       expect(tokenService.getRefreshToken()).toBe('my-refresh-token');
+    });
+  });
+
+  describe('isExpired', () => {
+    it('returns true if token is expired', () => {
+      const result = tokenService.isExpired(
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwianRpIjoiMTIzIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwidXNlcklkIjoiMTIzIiwicm9sZSI6IlVzZXIiLCJuYmYiOjE1ODkxNzk5MTgsImV4cCI6MTU4OTE4MDUxOCwiaWF0IjoxNTg5MTc5OTE4fQ.H3AFmPaKXUooX82-F366Unr7OLxlfdtdoxy7-W216k0',
+      );
+
+      expect(result).toBeTruthy();
+    });
+
+    it('returns false if token is not expired', () => {
+      // expires 11/13/2273
+      const result = tokenService.isExpired(
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwianRpIjoiMTIzIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwidXNlcklkIjoiMTIzIiwicm9sZSI6IlVzZXIiLCJuYmYiOjE1ODkxNzk5MTgsImV4cCI6OTU4OTE4MDUxOCwiaWF0IjoxNTg5MTc5OTE4fQ.8hqwk-P0hKiptfAW6AR91tk83HxPJs6eoIN38rAl8eE',
+      );
+
+      expect(result).toBeFalsy();
+    });
+  });
+
+  describe('clearToken', () => {
+    it('removes both tokens from localStorage', () => {
+      const proto = Object.getPrototypeOf(window.localStorage);
+      jest.spyOn(proto, 'removeItem');
+
+      tokenService.clearToken();
+
+      expect(localStorage.removeItem).toBeCalledWith(
+        tokenServiceConstants.accessToken,
+      );
+      expect(localStorage.removeItem).toBeCalledWith(
+        tokenServiceConstants.refreshToken,
+      );
     });
   });
 });

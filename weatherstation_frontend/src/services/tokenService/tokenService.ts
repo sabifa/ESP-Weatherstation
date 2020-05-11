@@ -15,11 +15,15 @@ const tokenService = {
     return localStorage.getItem(tokenServiceConstants.refreshToken);
   },
   isExpired(accessToken: string): boolean {
-    return true;
+    const decodedToken = JSON.parse(atob(accessToken.split('.')[1]));
+    const nowInUnix = Math.round((new Date()).getTime() / 1000);
+
+    return decodedToken.exp < nowInUnix;
   },
   clearToken(): void {
-    
-  }
+    localStorage.removeItem(tokenServiceConstants.accessToken);
+    localStorage.removeItem(tokenServiceConstants.refreshToken);
+  },
 };
 
 export default tokenService;
