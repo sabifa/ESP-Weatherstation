@@ -1,8 +1,8 @@
 import httpClient from '@/services/httpClient/httpClient';
 import tokenService from '@/services/tokenService/tokenService';
+import { when } from 'jest-when';
 import api from '..';
 import { LoginRequest, LoginResponse } from '../loginOrRegister';
-import { when } from 'jest-when';
 
 describe('login', () => {
   const request: LoginRequest = {
