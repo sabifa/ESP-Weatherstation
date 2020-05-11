@@ -6,6 +6,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable import/no-cycle */
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import httpClient from '../services/httpClient/httpClient';
 
@@ -21,7 +22,6 @@ export default defineComponent({
         testRequest.value = `Error: ${error}`;
       }
     });
-
 
     return { testRequest };
   },

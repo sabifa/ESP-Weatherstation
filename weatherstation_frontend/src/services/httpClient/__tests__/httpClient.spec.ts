@@ -1,7 +1,7 @@
 import tokenService from '@/services/tokenService/tokenService';
-import httpClient, { baseUrl } from '../httpClient';
 import router from '@/router';
 import { when } from 'jest-when';
+import httpClient, { baseUrl } from '../httpClient';
 
 let accessTokenLocal = (): string | null => 'token';
 let refreshTokenLocal = (): string | null => 'refreshToken';
@@ -26,6 +26,7 @@ describe('httpClient', () => {
       .spyOn(tokenService, 'storeToken')
       .mockImplementation((x, y) => storeTokenMock(x, y));
     jest.spyOn(tokenService, 'clearToken').mockImplementation(() => {});
+    jest.spyOn(tokenService, 'isExpired').mockReturnValue(false);
     jest.spyOn(router, 'push').mockImplementation(() => {});
   });
 
@@ -35,7 +36,7 @@ describe('httpClient', () => {
   });
 
   const fetchMockSuccess = (
-    responseAsJson: Object = { success: true },
+    responseAsJson: Record<string, any> = { success: true },
   ): void => {
     const response = {
       ok: true,
@@ -171,19 +172,6 @@ describe('httpClient', () => {
         json: () => Promise.resolve({}),
       } as Response;
 
-      // when(fakeFetch)
-      //   .calledWith('https://localhost:5001/api/identity/refresh', {
-      //     method: 'POST',
-      //     headers: {
-      //       Accept: 'application/json',
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({
-      //       accessToken: 'token',
-      //       refreshToken: 'refreshToken',
-      //     }),
-      //   })
-      //   .mockReturnValue(Promise.resolve(response));
       fakeFetch = fakeFetchMock.mockReturnValueOnce(
         Promise.resolve(failResponse),
       ).mockReturnValueOnce(Promise.resolve(successResponse));

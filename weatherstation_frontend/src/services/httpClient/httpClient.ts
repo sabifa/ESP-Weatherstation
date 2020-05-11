@@ -1,18 +1,19 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import router from '@/router';
 import tokenService from '../tokenService/tokenService';
 import { LoginResponse } from '../api/loginOrRegister';
-import router from '@/router';
 
-export const baseUrl =
-  process.env.VUE_APP_ENV === 'production'
-    ? ''
-    : 'https://localhost:5001/api';
+export const baseUrl = process.env.VUE_APP_ENV === 'production'
+  ? ''
+  : 'https://localhost:5001/api';
 
 enum HttpMethod {
   POST = 'POST',
   GET = 'GET',
 }
 
-const logoutAndRedirect = () => {
+const logoutAndRedirect = (): void => {
   tokenService.clearToken();
   router.push('/login');
 };
@@ -23,7 +24,7 @@ const refreshToken = async (accessToken: string): Promise<void> => {
       '/identity/refresh',
       HttpMethod.POST,
       {
-        accessToken: accessToken,
+        accessToken,
         refreshToken: tokenService.getRefreshToken(),
       },
       false,
