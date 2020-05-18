@@ -18,23 +18,20 @@ namespace Weatherstation.Services.TokenService
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly JwtSettings _jwtSettings;
         private readonly DataContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public TokenService(TokenValidationParameters tokenValidationParameters,
             JwtSettings jwtSettings,
             DataContext context,
-            UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            UserManager<ApplicationUser> userManager)
         {
             _tokenValidationParameters = tokenValidationParameters;
             _jwtSettings = jwtSettings;
             _context = context;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
 
-        public async Task<AuthenticationResult> GenerateTokenAndAuthenticationResultForUser(IdentityUser user)
+        public async Task<AuthenticationResult> GenerateTokenAndAuthenticationResultForUser(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);

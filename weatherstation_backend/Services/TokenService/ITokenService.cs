@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Weatherstation.Models.Authentication;
-using Microsoft.AspNetCore.Identity;
+using Weatherstation.Entities;
 
 namespace Weatherstation.Services.TokenService
 {
     public interface ITokenService
     {       
-        Task<AuthenticationResult> GenerateTokenAndAuthenticationResultForUser(IdentityUser user);
+        Task<AuthenticationResult> GenerateTokenAndAuthenticationResultForUser(ApplicationUser user);
 
         ClaimsPrincipal GetPrincipalFromAccessToken(string token);
     }

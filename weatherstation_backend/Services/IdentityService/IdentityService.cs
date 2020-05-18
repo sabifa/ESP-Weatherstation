@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Weatherstation.Services.TokenService;
 using Weatherstation.Models.ApplicationRole;
+using Weatherstation.Entities;
 
 namespace Weatherstation.Services.IdentityService
 {
     public class IdentityService : IIdentityService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly DataContext _context;
 
-        public IdentityService(UserManager<IdentityUser> userManager, DataContext context, ITokenService tokenService)
+        public IdentityService(UserManager<ApplicationUser> userManager, DataContext context, ITokenService tokenService)
         {
             _userManager = userManager;
             _context = context;
@@ -36,7 +37,7 @@ namespace Weatherstation.Services.IdentityService
                 };
             }
 
-            var user = new IdentityUser
+            var user = new ApplicationUser
             {
                 Email = email,
                 UserName = email
