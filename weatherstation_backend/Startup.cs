@@ -39,6 +39,10 @@ namespace Weatherstation
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
 
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
             ConfigureAuthentication(services);
 
             services.AddScoped<IIdentityService, IdentityService>();
