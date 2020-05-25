@@ -5,26 +5,31 @@
       <span v-else>Login</span>
     </h1>
     <form
+      ref="loginForm"
       class="form"
       @submit.prevent="handleSubmit"
     >
-      <input
+      <el-input
         v-model="email"
         data-testid="email"
         placeholder="Email"
         type="email"
         autocomplete="username"
         required
-      >
-      <input
+      />
+      <el-input
         v-model="password"
         data-testid="password"
         placeholder="Passwort"
         type="password"
         autocomplete="current-password"
         required
-      >
-      <input type="submit">
+      />
+      <el-input
+        v-loading="false"
+        type="submit"
+        value="Absenden"
+      />
     </form>
   </div>
 </template>
@@ -82,16 +87,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.form {
-  width: 300px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
+.login {
+  .form {
+    width: 300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 
-  input:last-child {
-    width: 80px;
-    margin-top: 5px;
-    margin-left: auto;
+    .el-input,
+    .el-button {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>

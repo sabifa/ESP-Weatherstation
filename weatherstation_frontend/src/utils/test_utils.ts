@@ -6,11 +6,13 @@ import { Wrapper, mount, createLocalVue } from '@vue/test-utils';
 import { CombinedVueInstance, VueConstructor } from 'vue/types/vue.d';
 import VueRouter from 'vue-router';
 import CompositionApi from '@vue/composition-api';
+import ElementUI from 'element-ui';
 
 const localVue = createLocalVue();
 
 localVue.use(VueRouter);
 localVue.use(CompositionApi);
+localVue.use(ElementUI);
 
 export const render = (
   component: VueConstructor<Vue>,
