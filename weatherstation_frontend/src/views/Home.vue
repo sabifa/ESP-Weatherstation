@@ -1,29 +1,36 @@
 <template>
   <div class="home">
     <h1>Weatherstation</h1>
-    {{ testRequest }}
+    <div v-loading="loading">
+      <div v-if="error">
+        {{ error }}
+      </div>Result:
+      <div v-if="result">
+        {{ result }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 /* eslint-disable import/no-cycle */
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
-import httpClient from '../services/httpClient/httpClient';
+import { defineComponent, onBeforeMount } from '@vue/composition-api';
+import usePromise from '../composables/usePromise';
+import api from '../services/api';
 
 export default defineComponent({
   name: 'Home',
   setup() {
-    const testRequest = ref<string>('');
+    const {
+      createPromise, error, loading, result,
+    } = usePromise(() =>
+      api.getAllSensorsForUser());
 
-    onMounted(async () => {
-      try {
-        testRequest.value = await httpClient.get<string>('/test');
-      } catch (error) {
-        testRequest.value = `Error: ${error}`;
-      }
+    onBeforeMount(async () => {
+      await createPromise();
     });
 
-    return { testRequest };
+    return { error, loading, result };
   },
 });
 </script>

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Weatherstation.Data;
 using Weatherstation.Entities;
+using Weatherstation.Models.ApplicationRole;
+using Weatherstation.Models.Sensors;
 
 namespace Weatherstation.Controllers
 {
@@ -23,33 +26,19 @@ namespace Weatherstation.Controllers
 
         // GET: api/Sensors 
         [AllowAnonymous]
+        [Authorize(Roles = ApplicationRole.Admin)]
         [HttpGet]
-        public async Task<IActionResult> GetSensors()
+        public async Task<IActionResult> GetAllSensors()
         {
             var sensors = await _context
                 .Sensors
+                .Include(sensor => sensor.SensorData)
                 .Include(sensor => sensor.UserSensors)
                 .ThenInclude(userSensor => userSensor.ApplicationUser)
                 .AsNoTracking()
                 .ToListAsync();
 
             return Ok(sensors);
-        }
-
-        // GET: api/Sensors/users 
-        [AllowAnonymous]
-        [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
-        {
-            var x = await _context
-                .Users
-                .Include(user => user.UserSensors)
-                .ThenInclude(userSensors => userSensors.Sensor)
-                .ThenInclude(sensor => sensor.SensorData)
-                .AsNoTracking()
-                .ToListAsync();
-
-            return Ok(x);
         }
 
         public class test
@@ -119,6 +108,59 @@ namespace Weatherstation.Controllers
                 .Include(x => x.ApplicationUser)
                 .ToListAsync();
             return Ok(userSensors);
+        }
+
+        // GET: api/Sensors/MySensors
+        [HttpGet("MySensors")]
+        public async Task<IActionResult> MySensors()
+        {
+            var userId = User.FindFirst("userId").Value;
+
+            var user = await _context
+                .Users
+                .Where(user => user.Id == userId)
+                .Include(user => user.UserSensors)
+                .ThenInclude(userSensors => userSensors.Sensor)
+                .ThenInclude(sensor => sensor.SensorData)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+            if (user == null)
+            {
+                return BadRequest("No user found.");
+            }
+
+            var sensorsOfUser = new List<SensorsViewModel>();
+
+            foreach (var userSensor in user.UserSensors)
+            {
+                var sensor = new SensorsViewModel()
+                {
+                    MacAddress = userSensor.Sensor.MacAddress,
+                    Name = userSensor.Sensor.Name,
+                    Location = userSensor.Sensor.Location,
+                    SensorData = userSensor.Sensor.SensorData,
+                };
+                sensorsOfUser.Add(sensor);
+            }
+
+            return Ok(sensorsOfUser);
+        }
+
+        // GET: api/Sensors/users 
+        [AllowAnonymous]
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var x = await _context
+                .Users
+                .Include(user => user.UserSensors)
+                .ThenInclude(userSensors => userSensors.Sensor)
+                .ThenInclude(sensor => sensor.SensorData)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(x);
         }
     }
 }
