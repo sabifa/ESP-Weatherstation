@@ -1,32 +1,31 @@
-import { ref, Ref } from '@vue/composition-api';
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { ref } from '@vue/composition-api';
 
-type usePromiseReturn = {
-  createPromise: (...args: any[]) => Promise<void>;
-  error: Ref<unknown>;
-  loading: Ref<boolean>;
-  result: Ref<unknown>;
-}
-
-export default function usePromise(fn: Function): usePromiseReturn {
-  const result = ref(null);
+export default function usePromise<T, R extends unknown[]>(
+  fn: (...args: R) => Promise<T>,
+) {
+  const result = ref<T>();
   const loading = ref(false);
-  const error = ref(null);
+  const error = ref();
 
-  const createPromise = async (...args: any[]): Promise<void> => {
+  const createPromise = async (...args: R): Promise<void> => {
     loading.value = true;
-    error.value = null;
-    result.value = null;
+    error.value = undefined;
+    result.value = undefined;
 
     try {
       result.value = await fn(...args);
-    } catch (e) {
-      error.value = e;
+    } catch (err) {
+      error.value = err;
     } finally {
       loading.value = false;
     }
   };
 
   return {
-    createPromise, error, loading, result,
+    createPromise,
+    error,
+    loading,
+    result,
   };
 }
