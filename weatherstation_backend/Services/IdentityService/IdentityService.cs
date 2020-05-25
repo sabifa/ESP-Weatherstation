@@ -25,7 +25,7 @@ namespace Weatherstation.Services.IdentityService
             _tokenService = tokenService;
         }
 
-        public async Task<AuthenticationResult> RegisterAsync(string email, string password)
+        public async Task<AuthenticationResult> RegisterAsync(string email, string password, string firstName)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -39,6 +39,7 @@ namespace Weatherstation.Services.IdentityService
 
             var user = new ApplicationUser
             {
+                FirstName = firstName,
                 Email = email,
                 UserName = email
             };

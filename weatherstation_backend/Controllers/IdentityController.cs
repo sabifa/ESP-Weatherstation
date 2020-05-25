@@ -21,7 +21,7 @@ namespace Weatherstation.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequest request)
         {
-            var authResponse = await _identityService.RegisterAsync(request.Email, request.Password);
+            var authResponse = await _identityService.RegisterAsync(request.Email, request.Password, request.FirstName);
 
             if (!authResponse.Success)
             {

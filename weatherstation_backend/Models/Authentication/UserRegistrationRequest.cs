@@ -10,5 +10,8 @@ namespace Weatherstation.Models.Authentication
 
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        public string FirstName { get; set; }
     }
 }
