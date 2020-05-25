@@ -18,6 +18,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Weatherstation.Entities;
+using Weatherstation.Features.Sensors.Presentation;
+using Weatherstation.Features.Sensors.DataAccess;
 
 namespace Weatherstation
 {
@@ -48,6 +50,8 @@ namespace Weatherstation
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IDbSeeder, DbSeeder>();
+            services.AddScoped<ISensorsLoader, SensorsLoader>();
+            services.AddScoped<ISensorsRepository, SensorsRepository>();
 
             services.AddCors();
 
