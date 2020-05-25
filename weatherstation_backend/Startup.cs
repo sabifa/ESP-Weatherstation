@@ -47,6 +47,7 @@ namespace Weatherstation
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IDbSeeder, DbSeeder>();
 
             services.AddCors();
 
@@ -117,6 +118,13 @@ namespace Weatherstation
         {
             if (env.IsDevelopment())
             {
+                var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+                using (var scope = scopeFactory.CreateScope())
+                {
+                    var dbSeeder = scope.ServiceProvider.GetService<IDbSeeder>();
+                    dbSeeder.Seed();
+                }
+
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -132,9 +140,9 @@ namespace Weatherstation
 
             app.UseAuthentication();
             app.UseCors(builder => builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseMvc();
         }
