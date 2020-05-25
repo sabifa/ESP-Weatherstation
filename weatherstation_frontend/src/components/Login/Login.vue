@@ -25,7 +25,7 @@
         required
       />
       <el-input
-        v-loading="false"
+        v-loading="loading"
         type="submit"
         value="Absenden"
       />
@@ -43,14 +43,17 @@ import api from '../../services/api';
 export default defineComponent({
   name: 'Login',
   setup() {
+    const {
+      createPromise,
+      error,
+      loading,
+    } = usePromise(async (email: string, password: string) =>
+      api.login({ email, password }));
     const toast = useToast();
     const email = ref('');
     const password = ref('');
 
     const handleSubmit = async (): Promise<void> => {
-      const { createPromise, error } = usePromise(async (e: string, p: string) =>
-        api.login({ email: e, password: p }));
-
       await createPromise(email.value, password.value);
 
       if (error.value) {
@@ -65,6 +68,7 @@ export default defineComponent({
       handleSubmit,
       email,
       password,
+      loading,
     };
   },
 });

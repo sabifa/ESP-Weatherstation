@@ -4,7 +4,6 @@ import api from '@/services/api';
 import { LoginResponse } from '@/services/api/loginOrRegister';
 import { when } from 'jest-when';
 import { Wrapper } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
 import Login from '../LoginPage.vue';
 
 // TODO: Extract this to test_utils, currently not working
@@ -41,6 +40,7 @@ describe('Login', () => {
       .calledWith({
         email: 'my-new-username',
         password: 'my-new-password',
+        firstname: 'my-firstname',
       })
       .mockReturnValue(Promise.resolve(loginResponse));
   });
@@ -119,6 +119,7 @@ describe('Login', () => {
       const [vm, wrapper] = render(Login);
 
       await registerClick(wrapper, vm);
+      wrapper.find('[data-testid="firstname"]').setValue('my-firstname');
       await enterMailAndPassword(wrapper, vm, 'my-new-username', 'my-new-password');
 
       expect(api.register).toBeCalled();
@@ -130,6 +131,7 @@ describe('Login', () => {
       const [vm, wrapper] = render(Login);
 
       await registerClick(wrapper, vm);
+      wrapper.find('[data-testid="firstname"]').setValue('my-firstname');
       await enterMailAndPassword(wrapper, vm, 'my-new-username', 'my-wrong-password');
 
       expect(router.push).not.toBeCalledWith('/');

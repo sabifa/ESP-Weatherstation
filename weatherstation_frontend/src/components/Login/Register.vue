@@ -9,11 +9,10 @@
       @submit.prevent="handleSubmit"
     >
       <el-input
-        v-model="email"
-        data-testid="email"
-        placeholder="Email"
-        type="email"
-        autocomplete="username"
+        v-model="firstname"
+        data-testid="firstname"
+        placeholder="Vorname"
+        autocomplete="firstname"
         required
       />
       <el-input
@@ -33,7 +32,7 @@
         required
       />
       <el-input
-        v-loading="false"
+        v-loading="loading"
         type="submit"
         value="Absenden"
       />
@@ -51,15 +50,21 @@ import api from '../../services/api';
 export default defineComponent({
   name: 'Login',
   setup() {
+    const {
+      createPromise,
+      error,
+      loading,
+    } = usePromise(
+      async (email: string, password: string, firstname: string) =>
+        api.register({ email, password, firstname }),
+    );
     const toast = useToast();
+    const firstname = ref('');
     const email = ref('');
     const password = ref('');
 
     const handleSubmit = async (): Promise<void> => {
-      const { createPromise, error } = usePromise(async (e: string, p: string) =>
-        api.register({ email: e, password: p }));
-
-      await createPromise(email.value, password.value);
+      await createPromise(email.value, password.value, firstname.value);
 
       if (error.value) {
         toast.error('Registrierung fehlgeschlagen');
@@ -73,6 +78,8 @@ export default defineComponent({
       handleSubmit,
       email,
       password,
+      loading,
+      firstname,
     };
   },
 });

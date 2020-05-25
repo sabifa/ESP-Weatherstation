@@ -13,7 +13,7 @@ export type LoginResponse = {
 };
 
 const sendIdentityRequest = async (
-  loginRequest: LoginRequest,
+  loginRequest: LoginRequest | RegisterRequest,
   login: boolean,
 ): Promise<LoginResponse> => {
   const url = login ? '/identity/login' : '/identity/register';
@@ -26,6 +26,12 @@ export const login = async (
   loginRequest: LoginRequest,
 ): Promise<LoginResponse> => sendIdentityRequest(loginRequest, true);
 
+export type RegisterRequest = {
+  email: string;
+  password: string;
+  firstname: string;
+};
+
 export const register = async (
-  registerRequest: LoginRequest,
+  registerRequest: RegisterRequest,
 ): Promise<LoginResponse> => sendIdentityRequest(registerRequest, false);

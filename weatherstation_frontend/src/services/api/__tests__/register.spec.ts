@@ -2,12 +2,13 @@ import httpClient from '@/services/httpClient/httpClient';
 import tokenService from '@/services/tokenService/tokenService';
 import { when } from 'jest-when';
 import api from '..';
-import { LoginRequest, LoginResponse } from '../loginOrRegister';
+import { RegisterRequest, LoginResponse } from '../loginOrRegister';
 
 describe('register', () => {
-  const registerRequest: LoginRequest = {
+  const registerRequest: RegisterRequest = {
     email: 'test@gmail.com',
     password: 'password123!',
+    firstname: 'Firstname',
   };
 
   beforeEach(() => {
@@ -25,9 +26,10 @@ describe('register', () => {
     };
 
     beforeEach(() => {
-      jest
-        .spyOn(httpClient, 'post')
-        .mockReturnValue(Promise.resolve(expected));
+      when(jest.spyOn(httpClient, 'post'))
+        .mockRejectedValue(new Error('failed'))
+        .calledWith('/identity/register', registerRequest)
+        .mockResolvedValue(expected);
     });
 
     it('returns LoginResponse when register succeeded', async () => {
@@ -59,6 +61,7 @@ describe('register', () => {
       await expect(api.register(registerRequest)).rejects.toThrowError(
         'error',
       );
+
       expect(tokenService.storeToken).not.toBeCalled();
     });
   });
