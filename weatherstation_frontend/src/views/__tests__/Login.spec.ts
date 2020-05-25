@@ -4,6 +4,7 @@ import api from '@/services/api';
 import { LoginResponse } from '@/services/api/loginOrRegister';
 import { when } from 'jest-when';
 import { Wrapper } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import Login from '../LoginPage.vue';
 
 // TODO: Extract this to test_utils, currently not working
@@ -31,9 +32,10 @@ describe('Login', () => {
 
     const login = jest.spyOn(api, 'login');
     when(login)
-      .mockRejectedValue(new Error('login failed'))
+      .mockReturnValue(Promise.reject(new Error('login failed')))
       .calledWith({ email: 'my-username', password: 'my-password' })
       .mockReturnValue(Promise.resolve(loginResponse));
+
     when(jest.spyOn(api, 'register'))
       .mockRejectedValue(new Error('register failed'))
       .calledWith({
@@ -66,66 +68,72 @@ describe('Login', () => {
     wrapper.find('[data-testid="password"]').setValue(password);
     wrapper.find('input[type="submit"]').trigger('submit');
     await vm.$nextTick();
+    await vm.$nextTick();
   }
 
-  it('redirects to home after successful login', async () => {
-    const [vm, wrapper] = render(Login);
+  describe('login', () => {
+    it('redirects to home after successful login', async () => {
+      const [vm, wrapper] = render(Login);
 
-    await enterMailAndPassword(wrapper, vm, 'my-username', 'my-password');
+      await enterMailAndPassword(wrapper, vm, 'my-username', 'my-password');
 
-    expect(router.push).toBeCalledWith('/');
-    expect(mockSuccess).toBeCalledWith('login succeeded');
+      expect(router.push).toBeCalledWith('/');
+      expect(mockSuccess).toBeCalledWith('Login erfolgreich');
+    });
+
+    it('does not redirect login failed', async () => {
+      const [vm, wrapper] = render(Login);
+
+      await enterMailAndPassword(wrapper, vm, 'my-username', 'my-wrong-password');
+
+      expect(router.push).not.toBeCalledWith('/');
+      expect(mockError).toBeCalledWith('Login fehlgeschlagen');
+    });
+
+    it('shows register header text if the user wants to register', async () => {
+      const [vm, wrapper] = render(Login);
+
+      await registerClick(wrapper, vm);
+
+      expect(wrapper.find('[data-testid="header"]').text()).toBe(
+        'Registrieren',
+      );
+    });
+
+    it('switches back to login header', async () => {
+      const [vm, wrapper] = render(Login);
+
+      await registerClick(wrapper, vm);
+      expect(wrapper.find('[data-testid="header"]').text()).toBe(
+        'Registrieren',
+      );
+
+      await registerClick(wrapper, vm);
+      expect(wrapper.find('[data-testid="header"]').text()).toBe('Login');
+    });
   });
 
-  it('does not redirect login failed', async () => {
-    const [vm, wrapper] = render(Login);
 
-    await enterMailAndPassword(wrapper, vm, 'my-username', 'my-wrong-password');
+  describe('register', () => {
+    it('calls api.register instead of api.login', async () => {
+      const [vm, wrapper] = render(Login);
 
-    expect(router.push).not.toBeCalledWith('/');
-    expect(mockError).toBeCalledWith('login failed');
-  });
+      await registerClick(wrapper, vm);
+      await enterMailAndPassword(wrapper, vm, 'my-new-username', 'my-new-password');
 
-  it('shows register header text if the user wants to register', async () => {
-    const [vm, wrapper] = render(Login);
+      expect(api.register).toBeCalled();
+      expect(router.push).toBeCalledWith('/');
+      expect(mockSuccess).toBeCalledWith('Registrierung erfolgreich');
+    });
 
-    await registerClick(wrapper, vm);
+    it('does not redirect if register fails', async () => {
+      const [vm, wrapper] = render(Login);
 
-    expect(wrapper.find('[data-testid="header"]').text()).toBe(
-      'Registrieren',
-    );
-  });
+      await registerClick(wrapper, vm);
+      await enterMailAndPassword(wrapper, vm, 'my-new-username', 'my-wrong-password');
 
-  it('switches back to login header', async () => {
-    const [vm, wrapper] = render(Login);
-
-    await registerClick(wrapper, vm);
-    expect(wrapper.find('[data-testid="header"]').text()).toBe(
-      'Registrieren',
-    );
-
-    await registerClick(wrapper, vm);
-    expect(wrapper.find('[data-testid="header"]').text()).toBe('Login');
-  });
-
-  it('calls api.register instead of api.login', async () => {
-    const [vm, wrapper] = render(Login);
-
-    await registerClick(wrapper, vm);
-    await enterMailAndPassword(wrapper, vm, 'my-new-username', 'my-new-password');
-
-    expect(api.register).toBeCalled();
-    expect(router.push).toBeCalledWith('/');
-    expect(mockSuccess).toBeCalledWith('register succeeded');
-  });
-
-  it('does not redirect if register fails', async () => {
-    const [vm, wrapper] = render(Login);
-
-    await registerClick(wrapper, vm);
-    await enterMailAndPassword(wrapper, vm, 'my-new-username', 'my-wrong-password');
-
-    expect(router.push).not.toBeCalledWith('/');
-    expect(mockError).toBeCalledWith('register failed');
+      expect(router.push).not.toBeCalledWith('/');
+      expect(mockError).toBeCalledWith('Registrierung fehlgeschlagen');
+    });
   });
 });

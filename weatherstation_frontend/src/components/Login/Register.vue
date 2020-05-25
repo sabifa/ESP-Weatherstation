@@ -1,13 +1,21 @@
 <template>
-  <div>
+  <div class="register">
     <h1 data-testid="header">
-      Login
+      Registrieren
     </h1>
     <form
       ref="loginForm"
       class="form"
       @submit.prevent="handleSubmit"
     >
+      <el-input
+        v-model="email"
+        data-testid="email"
+        placeholder="Email"
+        type="email"
+        autocomplete="username"
+        required
+      />
       <el-input
         v-model="email"
         data-testid="email"
@@ -49,15 +57,15 @@ export default defineComponent({
 
     const handleSubmit = async (): Promise<void> => {
       const { createPromise, error } = usePromise(async (e: string, p: string) =>
-        api.login({ email: e, password: p }));
+        api.register({ email: e, password: p }));
 
       await createPromise(email.value, password.value);
 
       if (error.value) {
-        toast.error('Login fehlgeschlagen');
+        toast.error('Registrierung fehlgeschlagen');
       } else {
         router.push('/');
-        toast.success('Login erfolgreich');
+        toast.success('Registrierung erfolgreich');
       }
     };
 

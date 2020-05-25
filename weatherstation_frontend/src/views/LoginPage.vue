@@ -1,6 +1,7 @@
 <template>
   <div class="login">
-    <Login :register="userWantsToRegister" />
+    <Register v-if="userWantsToRegister" />
+    <Login v-else />
     <div
       data-testid="register_now"
       class="register_now"
@@ -15,11 +16,13 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import Login from '../components/Login/Login.vue';
+import Register from '../components/Login/Register.vue';
 
 export default defineComponent({
   name: 'LoginPage',
   components: {
     Login,
+    Register,
   },
   setup() {
     const userWantsToRegister = ref(false);
